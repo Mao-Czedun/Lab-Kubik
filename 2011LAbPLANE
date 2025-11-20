@@ -1,0 +1,40 @@
+using namespace std;
+struct PLANE {
+	char Reis[30];
+	int pol;
+	double time;
+};
+// DDR-Среднее время
+int DDR(PLANE* b, int& n, double srd) {
+	int i;
+	srd = (b[0].time + b[1].time + b[2].time + b[3].time + b[4].time + b[5].time) / n;
+	cout << "Среднее время  " << srd << endl;
+	return srd;
+}
+
+void DDF(PLANE* b, int& n, double& srd) {
+	int i;
+	cout << "Рейсы: " << endl;
+	for (i = 0; i <= n; i++) {
+		if (((b[i].time) - srd) > 1) {
+			cout << b[i].Reis << " " << b[i].pol << " " << b[i].time << endl;
+		}
+	}
+
+}
+
+void main() {
+	setlocale(LC_ALL, "Russian");
+	int n = 6;
+	double srd = 0;
+	PLANE* b = new PLANE[6];
+	b[0] = { "Гуайнабо",342,3 };
+	b[1] = { "Тернополь",145,13 };
+	b[2] = { "Ковель",198,7 };
+	b[3] = { "Мичуринск",293,5 };
+	b[4] = { "Жигулевск",636,8 };
+	b[5] = { "Азов",265,17 };
+	DDR(b, n, srd);
+	DDF(b, n, srd);
+
+}
