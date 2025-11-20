@@ -1,3 +1,7 @@
+#include <iostream>
+#include <clocale>
+#include <cmath>
+
 using namespace std;
 struct PLANE {
 	char Reis[30];
