@@ -1,0 +1,34 @@
+
+#include <iostream>
+#include <clocale>
+#include <cmath>
+#include <string>
+using namespace std;
+struct PLANE {
+	char Reis[30];
+	int num;
+	double time;
+};
+
+void Wod(struct PLANE* b, std::string reis) {
+	cout << "ВВедите пункт назначения: " << endl;
+	std::cin >> reis;
+	std::cout << reis;
+	if ((b[0].Reis) == (reis)) {
+		cout << "True";
+	}
+	return;
+}
+
+void main() {
+	setlocale(LC_ALL, "Russian");
+	PLANE* b = new PLANE[10];
+	std::string reis;
+	b[0] = { "Azov",278,3 };
+	b[1] = { "Тернополь",742,13 };
+	b[2] = { "Тернополь",785,7 };
+	b[3] = { "Жигулёвск",348,5 };
+	b[4] = { "Жигулевск",392,8 };
+	b[5] = { "Азов",265,17 };
+	Wod(b,reis);
+}
