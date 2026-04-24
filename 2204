@@ -69,5 +69,23 @@
 //		}
 //		s.insert(num);
 //	}
+
+#include <iostream> 
+#include <set> 
+#include<map>
+#include<string>
+using namespace std;
+int main()
+{
+	multiset<string> s;
+	string slovo;
+	int sise;
+	while(cin>>slovo)
+	{
+		s.insert(slovo);
+	}
+	int d = s.size();
+	for 
+}
 //	return(0);
 //}
