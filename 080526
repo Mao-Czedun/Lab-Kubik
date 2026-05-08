@@ -1,0 +1,81 @@
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string>
+#include <set>
+
+using namespace std;
+
+//Анаграммы – это слова, у которых те же буквы в том же количестве, но они располагаются в другом порядке. Исключить из массива строк слова-анаграммы.
+//в векторе могут храниться map'ы
+//int main()
+//{
+//	setlocale(LC_ALL, "Rus");
+//	int n;
+//	cin >> n;
+//	//vector <map<char,long>> pk;
+//	//vector <string> wslova;
+//	string slovo;
+//	map<char, long>bukvi;
+//	vector <pair<string, map<char, long>>> wslova;
+//
+//	for (int i = 0; i < n; i++)
+//	{
+//		cin >> slovo;
+//		for (int j = 0; j < wslova.size(); j++)
+//			char c = wslova[i][j];
+//		wslova = make_pair(slovo, bukvi);
+//	}
+//	for (int i = 0; i < n; i++) {
+//		bool f = 0;
+//		for (int j = i + 1; j < n; j++) {
+//			if (wslova[i].second == wslova[j].second)
+//			{
+//				f = 1;
+//			}
+//		}
+//		if (!f)
+//		{
+//			cout << wslova[i].first << " ";
+//		}
+//	}
+//	cout << endl;
+//	return 0;
+//}
+
+//map <char, int> KolSyml(string s)
+//{
+//	map<char, int> w;
+//	for (char c : s)
+//		w[c]++;//w[c]=w[c]+1
+//	return w;
+//}
+//
+//int main()
+//{
+//	setlocale(LC_ALL, "Rus");
+//	vector<string> words = { "ПАРК","КАРП","СОН" ,"НОС" ,"ДЕНЬ" };
+//	map < map<char, int>, int> s;
+//	for (const string& word : words)
+//		s[KolSyml(word)]++;
+//	cout << "Слова без анаграмм" << endl;
+//	for (const string& word : words)
+//	{
+//		if (s[KolSyml(word)] == 1)
+//			cout << word << endl;
+//	}
+//	return 0;
+//}
+
+//Палиндромы
+
+map<char, int>KolDlin(string s)
+{
+	map<char, int>re;
+	for (char c : s)
+	{
+		re[c]++;
+	}
+	int nech;
+	for (const auto&)
+}
