@@ -36,3 +36,33 @@ int main()
 		}
 	}
 }
+
+
+#include <iostream> 
+#include <queue>
+
+
+
+using namespace std;
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+	int x[9] = { 2,6,4,8,12,74,23,14 };
+	queue <int> st0;
+	for (int i = 1; i <= size(x);i++)
+	{
+		st0.push(x[i]);
+	}
+	int sr=0;
+	queue <int> st1=st0;
+	for (int i = 1; i <= size(st0); i++)
+	{
+		sr += st1.front();
+		st1.pop();
+	}
+	cout << sr << endl;
+	sr = sr / size(st0);
+	cout << sr;
+	return(0);
+}
