@@ -1,0 +1,314 @@
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+struct DNode {
+    int data;
+    DNode* prev;
+    DNode* next;
+    DNode(int val) : data(val), prev(nullptr), next(nullptr) {}
+};
+
+struct TreeNode {
+    int data;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+bool isPerfect(int n) {
+    if (n <= 1) return false;
+    int sum = 1;
+    for (int i = 2; i * i <= n; ++i) {
+        if (n % i == 0) {
+            sum += i;
+            if (i != n / i) sum += n / i;
+        }
+    }
+    return sum == n;
+}
+
+void task1() {
+    cout << "--------------------------------------------------\n";
+    cout << "Задача 1. Дано два однонаправленных списка целых чисел.\n";
+    cout << "Сформировать третий список, содержащий совершенные числа исходных списков.\n\n";
+
+    vector<int> valsA = { 6, 8, 28, 12, 496, 5, 28 };
+    vector<int> valsB = { 10, 8128, 5, 6, 7, 28 };
+
+    Node* headA = nullptr, * tailA = nullptr;
+    for (int v : valsA) {
+        Node* node = new Node(v);
+        if (!headA) headA = tailA = node;
+        else { tailA->next = node; tailA = node; }
+    }
+    Node* headB = nullptr, * tailB = nullptr;
+    for (int v : valsB) {
+        Node* node = new Node(v);
+        if (!headB) headB = tailB = node;
+        else { tailB->next = node; tailB = node; }
+    }
+
+    cout << "Входные данные:\n";
+    cout << "  Первый список:  ";
+    for (Node* p = headA; p; p = p->next) cout << p->data << " ";
+    cout << "\n  Второй список:   ";
+    for (Node* p = headB; p; p = p->next) cout << p->data << " ";
+    cout << "\n\n";
+
+    Node* headC = nullptr, * tailC = nullptr;
+    auto addToList = [&](Node*& head, Node*& tail, int val) {
+        Node* node = new Node(val);
+        if (!head) head = tail = node;
+        else { tail->next = node; tail = node; }
+        };
+
+    for (Node* p = headA; p; p = p->next)
+        if (isPerfect(p->data)) addToList(headC, tailC, p->data);
+    for (Node* p = headB; p; p = p->next)
+        if (isPerfect(p->data)) addToList(headC, tailC, p->data);
+
+    cout << "Результат (совершенные числа):\n  ";
+    for (Node* p = headC; p; p = p->next) cout << p->data << " ";
+    cout << "\n--------------------------------------------------\n\n";
+
+    while (headA) { Node* tmp = headA; headA = headA->next; delete tmp; }
+    while (headB) { Node* tmp = headB; headB = headB->next; delete tmp; }
+    while (headC) { Node* tmp = headC; headC = headC->next; delete tmp; }
+}
+
+void task2() {
+    cout << "--------------------------------------------------\n";
+    cout << "Задача 2. Дан двунаправленный список целых чисел.\n";
+    cout << "Переставить элементы так, чтобы сначала шли числа меньше среднего арифметического,\n";
+    cout << "а затем – числа больше среднего. Элементы, равные среднему, остаются на месте.\n\n";
+
+    vector<int> vals = { 5, 2, 8, 3, 9, 1, 7, 5 };
+    DNode* head = nullptr, * tail = nullptr;
+    for (int v : vals) {
+        DNode* node = new DNode(v);
+        if (!head) head = tail = node;
+        else {
+            tail->next = node;
+            node->prev = tail;
+            tail = node;
+        }
+    }
+
+    cout << "Входные данные (двунаправленный список):\n  ";
+    for (DNode* p = head; p; p = p->next) cout << p->data << " ";
+    cout << "\n\n";
+
+    double sum = 0;
+    int cnt = 0;
+    for (DNode* p = head; p; p = p->next) { sum += p->data; ++cnt; }
+    double avg = sum / cnt;
+
+    vector<int> less, greater;
+    for (DNode* p = head; p; p = p->next) {
+        if (p->data < avg) less.push_back(p->data);
+        else if (p->data > avg) greater.push_back(p->data);
+    }
+
+    DNode* cur = head;
+    int idx = 0;
+    for (int v : less) {
+        if (cur) {
+            cur->data = v;
+            cur = cur->next;
+        }
+    }
+    vector<int> equal;
+    for (int v : vals) if (v == avg) equal.push_back(v);
+    for (int v : equal) {
+        if (cur) { cur->data = v; cur = cur->next; }
+    }
+    for (int v : greater) {
+        if (cur) { cur->data = v; cur = cur->next; }
+    }
+
+    cout << "Результат (среднее = " << avg << "):\n  ";
+    for (DNode* p = head; p; p = p->next) cout << p->data << " ";
+    cout << "\n--------------------------------------------------\n\n";
+
+    while (head) { DNode* tmp = head; head = head->next; delete tmp; }
+}
+
+void insertBST(TreeNode*& root, int val) {
+    if (!root) { root = new TreeNode(val); return; }
+    if (val < root->data) insertBST(root->left, val);
+    else insertBST(root->right, val);
+}
+
+void collectLeaves(TreeNode* node, vector<int>& leaves) {
+    if (!node) return;
+    if (!node->left && !node->right) {
+        leaves.push_back(node->data);
+        return;
+    }
+    collectLeaves(node->left, leaves);
+    collectLeaves(node->right, leaves);
+}
+
+int countLess(TreeNode* node, double target) {
+    if (!node) return 0;
+    int c = (node->data < target) ? 1 : 0;
+    c += countLess(node->left, target);
+    c += countLess(node->right, target);
+    return c;
+}
+
+void deleteTree(TreeNode* node) {
+    if (!node) return;
+    deleteTree(node->left);
+    deleteTree(node->right);
+    delete node;
+}
+
+void task3() {
+    cout << "--------------------------------------------------\n";
+    cout << "Задача 3. Дано дерево двоичного поиска.\n";
+    cout << "Найти количество элементов дерева, меньших среднего арифметического листьев.\n\n";
+
+    vector<int> vals = { 10, 5, 15, 3, 7, 12, 18 };
+    TreeNode* root = nullptr;
+    for (int v : vals) insertBST(root, v);
+
+    cout << "Входные данные (элементы дерева):\n  ";
+    for (int v : vals) cout << v << " ";
+    cout << "\n\n";
+
+    vector<int> leaves;
+    collectLeaves(root, leaves);
+    double sum = 0;
+    for (int v : leaves) sum += v;
+    double avg = leaves.empty() ? 0 : sum / leaves.size();
+
+    int lessCount = countLess(root, avg);
+
+    cout << "Листья: ";
+    for (int v : leaves) cout << v << " ";
+    cout << "\nСреднее арифметическое листьев: " << avg;
+    cout << "\nКоличество элементов < среднего: " << lessCount << "\n";
+    cout << "--------------------------------------------------\n\n";
+
+    deleteTree(root);
+}
+
+void task4() {
+    cout << "--------------------------------------------------\n";
+    cout << "Задача 4. Дан файл f, компонентами которого являются целые числа.\n";
+    cout << "Переписать в файл g сначала все четные, потом все нечетные компоненты файла f.\n\n";
+
+    const char* fname = "f.txt";
+    const char* gname = "g.txt";
+
+    vector<int> data = { 4, 7, 2, 9, 12, 5, 8, 3, 10 };
+    {
+        ofstream fout(fname);
+        for (int v : data) fout << v << " ";
+    }
+
+    cout << "Входные данные (файл f):\n  ";
+    for (int v : data) cout << v << " ";
+    cout << "\n\n";
+
+    ifstream fin(fname);
+    vector<int> even, odd;
+    int num;
+    while (fin >> num) {
+        if (num % 2 == 0) even.push_back(num);
+        else odd.push_back(num);
+    }
+    fin.close();
+
+    ofstream gout(gname);
+    for (int v : even) gout << v << " ";
+    for (int v : odd)  gout << v << " ";
+    gout.close();
+
+    cout << "Результат (файл g):\n  ";
+    for (int v : even) cout << v << " ";
+    for (int v : odd)  cout << v << " ";
+    cout << "\n--------------------------------------------------\n\n";
+}
+
+void task5() {
+    cout << "--------------------------------------------------\n";
+    cout << "Задача 5. Даны действительные числа a1, a2, ..., an.\n";
+    cout << "Оставить без изменения, если последовательность упорядочена по не убыванию\n";
+    cout << "или не возрастанию. Иначе удалить элементы, порядковые номера которых кратны 4.\n\n";
+
+    vector<double> seq = { 1.2, 3.5, 2.8, 9.1, 7.4, 6.6, 5.0, 8.9, 4.4, 2.1, 3.3, 7.7 };
+    cout << "Входные данные:\n  ";
+    for (size_t i = 0; i < seq.size(); ++i) cout << seq[i] << (i != seq.size() - 1 ? ", " : "");
+    cout << "\n\n";
+
+    bool nonDec = true, nonInc = true;
+    for (size_t i = 1; i < seq.size(); ++i) {
+        if (seq[i - 1] > seq[i]) nonDec = false;
+        if (seq[i - 1] < seq[i]) nonInc = false;
+    }
+
+    vector<double> result;
+    if (nonDec || nonInc) {
+        result = seq;
+        cout << "Последовательность упорядочена. Изменений нет.\n";
+    }
+    else {
+        cout << "Последовательность не упорядочена. Удаляем элементы с номерами, кратными 4.\n";
+        for (size_t i = 0; i < seq.size(); ++i) {
+            if ((i + 1) % 4 != 0) result.push_back(seq[i]);
+        }
+    }
+
+    cout << "Результат:\n  ";
+    for (size_t i = 0; i < result.size(); ++i)
+        cout << result[i] << (i != result.size() - 1 ? ", " : "");
+    cout << "\n--------------------------------------------------\n\n";
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    cout << "Программа-справочник по задачам 2-го семестра\n";
+    cout << "Для выхода введите 0.\n\n";
+
+    while (true) {
+        cout << "Список задач:\n";
+        cout << "1. Совершенные числа из двух однонаправленных списков\n";
+        cout << "2. Перестановка элементов двунаправленного списка относительно среднего\n";
+        cout << "3. Количество элементов BST, меньших среднего арифметического листьев\n";
+        cout << "4. Разделение файла на четные и нечетные компоненты\n";
+        cout << "5. Удаление элементов с номерами, кратными 4, если не упорядочена\n";
+        cout << "0. Выход\n";
+        cout << "Введите номер задачи: ";
+
+        int choice;
+        cin >> choice;
+        if (choice == 0) {
+            cout << "Завершение работы.\n";
+            break;
+        }
+
+        switch (choice) {
+        case 1: task1(); break;
+        case 2: task2(); break;
+        case 3: task3(); break;
+        case 4: task4(); break;
+        case 5: task5(); break;
+        default:
+            cout << "Такой задачи не найдено. Попробуйте снова.\n\n";
+        }
+    }
+    return 0;
+}
